@@ -1,0 +1,66 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-lg border-4 border-orange-600">
+        <h1 class="text-2xl font-bold mb-6 text-center text-orange-600">Article Generator</h1>
+        <form id="article-form">
+            <div class="mb-4">
+                <label for="article-input" class="block text-sm font-medium mb-2 text-orange-500">Enter your topic:</label>
+                <input type="text" id="article-input" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-600" placeholder="Type your topic here..." required>
+            </div>
+            <button id="submitBtn" type="submit" class="w-full p-3 bg-orange-600 rounded hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-600 flex items-center justify-center text-black">
+                <i class="fas fa-paper-plane mr-2"></i> <span class="hidden sm:inline">Generate Article</span>
+            </button>
+        </form>
+        <div id="content" class="mt-6 relative">
+            <label for="article-output" class="block text-sm font-medium mb-2 text-orange-500">Generated Article:</label>
+            <textarea id="article-output" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-600" rows="10" placeholder="Your generated article will appear here..." readonly></textarea>
+            <button onclick="copyToClipboard()" class="absolute top-0 right-0 mt-2 mr-2 text-orange-500 hover:text-orange-600 focus:outline-none relative group">
+                <i class="fas fa-code"></i>
+                <span class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Copy</span>
+            </button>
+        </div>
+    </div>
+    <script>
+        function copyToClipboard() {
+            const output = document.getElementById('article-output');
+            output.select();
+            output.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand('copy');
+            alert('Copied to clipboard');
+        }
+
+        const populate = async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+            let prompt = document.getElementById('article-input').value; // Get the input value
+            let response = await fetch('/generate_blog', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: prompt }) // Send the input as 'text'
+            });
+            const generatedArticle = await response.text(); // Get the response text
+            document.getElementById('article-output').value = generatedArticle; // Set the textarea value
+        }
+
+        const submitBtn = document.querySelector('#article-form');
+        submitBtn.addEventListener('submit', populate); // Listen for form submission
+    </script>
+
+    
+
+</body>
+</html>
