@@ -54,7 +54,7 @@
             submitBtn.disabled = true;
 
             try {
-                let response = await fetch('/generate_blog', {
+                let response = await fetch('/handle_generate_blog', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
