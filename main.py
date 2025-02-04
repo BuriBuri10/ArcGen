@@ -9,7 +9,7 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route('/generate_blog', methods=['POST'])
+@app.route('/handle_generate_blog', methods=['POST'])
 def handle_generate_blog():
     """Handle blog generation requests"""
     try:
