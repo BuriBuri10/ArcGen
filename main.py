@@ -75,3 +75,6 @@ def handle_generate_blog():
     except Exception as e:
         app.logger.error(f"Error generating blog: {str(e)}")
         return jsonify(error="Failed to generate blog"), 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
