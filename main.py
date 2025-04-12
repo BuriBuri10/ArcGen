@@ -1,9 +1,19 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
-import ollama
+from langchain.chat_models import ChatGroq
+from langchain.schema import HumanMessage
+import os
 
 app = Flask(__name__)
 CORS(app)
+
+# Set your Groq API key
+os.environ["GROQ_API_KEY"] = "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"  # or set it securely via environment variables
+
+# Initialize Groq Chat model
+llm = ChatGroq(
+    model_name="deepseek-llm/deepseek-llm-70b-chat"
+)
 
 @app.route('/')
 def index():
@@ -11,25 +21,22 @@ def index():
 
 @app.route('/handle_generate_blog', methods=['POST'])
 def handle_generate_blog():
-    """Handle blog generation requests"""
+    """Generate a blog post based on the provided topic."""
     try:
-        # Get input data
         data = request.get_json()
         if not data or 'topic' not in data:
             return jsonify(error="Missing 'topic' in request"), 400
-            
-        # Generate content
-        response = ollama.generate(
-            model="deepseek-r1:1.5b",
-            prompt=f"Generate a comprehensive blog post about: {data['topic']} and finish the article with a seprate line that says 'Hurray with a Space'",
-            options={
-                'temperature': 0.7,
-                'num_predict': 5000  # Ollama uses 'num_predict' instead of 'max_tokens'
-            }
-        )
         
-        return jsonify(content=response['response'])
-    
+        if not isinstance(data['topic'], str) or not data['topic'].strip():
+            return jsonify(error="Invalid input: 'topic' must be a non-empty string"), 400
+
+        prompt = f"Generate a comprehensive blog post about: {data['topic']}. End the article with a separate line that says 'Hurray with a Space'."
+
+        # Use Groq Chat model
+        response = llm([HumanMessage(content=prompt)]).content
+
+        return jsonify(content=response)
+
     except Exception as e:
         app.logger.error(f"Error generating blog: {str(e)}")
         return jsonify(error="Failed to generate blog"), 500
