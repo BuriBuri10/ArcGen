@@ -8,8 +8,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Set your Groq API key
-# os.environ["GROQ_API_KEY"] = ''  # or set it securely via environment variables
+os.environ["GROQ_API_KEY"] = "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"  # or set it securely via environment variables
 
+# Initialize Groq Chat model
 llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key="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")
 
 @app.route('/')
