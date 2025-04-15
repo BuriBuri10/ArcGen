@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
-from langchain.chat_models import ChatGroq
+from langchain_groq import ChatGroq
 from langchain.schema import HumanMessage
 import os
 
@@ -8,12 +8,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Set your Groq API key
-os.environ["GROQ_API_KEY"] = "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"  # or set it securely via environment variables
+# os.environ["GROQ_API_KEY"] = ''  # or set it securely via environment variables
 
-# Initialize Groq Chat model
-llm = ChatGroq(
-    model_name="deepseek-llm/deepseek-llm-70b-chat"
-)
+llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key="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")
 
 @app.route('/')
 def index():
